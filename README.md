@@ -32,12 +32,10 @@ web.xml
 
 ```
 
-URL:
-
+URL:  
 http://localhost:8080/ServerSideProject
 
-Application Context:
-
+Application Context:  
 /ServerSideProject
 
 :checkered_flag:**Completion of Task 1 is this lab's checkpoint.**
