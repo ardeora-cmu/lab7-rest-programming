@@ -328,12 +328,13 @@ public class Main {
     }
 
 }
+```
 
 Server side code:
 
 ```
 
-//******************* Server Side Code ********************
+// ******************* Server Side Code ********************
 // 95-702 HTTP Lab exercise
 // Working server handling POST, PUT, GET, and DELETE
 
