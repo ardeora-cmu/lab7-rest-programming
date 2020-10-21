@@ -76,8 +76,8 @@ request. One will be used to return the value of a variable and the other will b
 display the list of variables found within the map on the server. You are not being asked
 to return the values that are also stored in the map.
 
-Show your TA your working solution. My solution has the following output on the client
-side:
+:checkered_flag:**Show your TA your working solution. My solution has the following output on the client
+side:**
 
 ```
 Begin main of REST lab.
