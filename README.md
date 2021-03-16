@@ -4,101 +4,16 @@
 
 ## Modifying a working client and server handling POST, PUT, GET, and DELETE
 
+In RESTful design, the same HTTP operation may be applied to URL's that are related to each other but differ in what resource each represents. In this lab, we experiment with using the HTTP GET with two URL's - one representing a variable name and value stored on the server and the other representing a set of variables stored on the server.
+
 The first task in this lab is to get the following code running in IntelliJ. Create a standard
 Java project named WebServiceDesignStyles3ClientSideProject. Within that project, use the client side code
-provided. Create a standard Java Web Application project with the server side code provided. Name
-the server side project WebServiceDesignStyles3ServerSideProject.
-
-Deploy the server side project to TomEE. Run the client side code. Spend some time studying
-both the client and the server.
-
-web.xml
-
-```
-<?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
-         version="4.0">
-    <servlet>
-        <servlet-name>TestServlet</servlet-name>
-        <servlet-class>edu.cmu.andrew.mm6.TestServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>TestServlet</servlet-name>
-        <url-pattern>/*</url-pattern>
-    </servlet-mapping>
-</web-app>
-
-```
-
-URL:  
-http://localhost:8080/ServerSideProject
-
-Application Context:  
-/ServerSideProject
-
-:checkered_flag:**Completion of Task 1 is this lab's checkpoint.**
-
-
-The second task is to modify the client so that it provides methods called getVariableList() and
-the lower level method named doGetList(). Note the call to the getVariableList method (commented out)
-within the client side code. After modifying the server, remove the comment symbols from this
-call. That is, the method should actually work.
-
-The getVariableList method has the following signature and description:
-
-```
-public static String getVariableList()
-// makes a call to doGetList()
-// returns a list of all variable defined on the server.
-
-```
-
-The doGetList method has the following signature and description:
-
-```
-public static int doGetList(Result r)
-// Makes an HTTP GET request to the server. This is similar to the doGet provided on the client
-// but this one uses a different URL.
-// This method makes a call to the HTTP GET method using
-// http://localhost:8080/WebServiceDesignStyles3ProjectServerLab/VariableMemory/"
-
-```
-
-The third task is to modify the doGet method on the server. Currently it returns
-an HTTP 401 if a name is not provided in the URL. Your new doGet method will return
-a list of variable names found in the map. This list of variable names will be returned
-to the client for display. Clients will now be able to use two different URL's with a GET
-request. One will be used to return the value of a variable and the other will be able
-display the list of variables found within the map on the server. You are not being asked
-to return the values that are also stored in the map.
-
-:checkered_flag:**Show your TA your working solution. My solution has the following output on the client
-side:**
-
-```
-Begin main of REST lab.
-Assign 100 to the variable named x
-Assign 199 to the variable named x
-Sending a GET request for x
-199
-Sending a DELETE request for x
-x is deleted but let's try to read it
-Error from server 401
-It is
-a wonderful day
-in the neighborhood!
-abc
-End main of REST lab
-```
-
-
-Client side code
+provided here:
 
 ```
 
 // ****************  Client side code  *********************
+
 package edu.cmu.andrew.mm6;
 
 import java.io.BufferedReader;
@@ -123,7 +38,6 @@ class Result {
 }
 public class Main {
 
-
     public static void main(String[] args) throws Exception{
 
         System.out.println("Begin main of REST lab.");
@@ -139,9 +53,9 @@ public class Main {
         System.out.println("x is deleted but let's try to read it");
         System.out.println(read("x"));
 
-        assign("a","It is\n ");
-        assign("b","a wonderful day\n");
-        assign("c","in the neighborhood!\n");
+        assign("a","Computer Science is no more about computers\n ");
+        assign("b","than astronomy is about telescopes.\n");
+        assign("c","Edsger W. Dijkstra\n");
 
         System.out.println(read("a"));
         System.out.println(read("b"));
@@ -190,90 +104,88 @@ public class Main {
         String output;
 
         try {
-                // Make call to a particular URL
-		URL url = new URL("http://localhost:8080/WebServiceDesignStyles3ProjectServerLab/VariableMemory/");
-		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            // Make call to a particular URL
+            URL url = new URL("http://localhost:8080/ServerSideREST/VariableMemory/");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
-                // set request method to POST and send name value pair
-                conn.setRequestMethod("POST");
-		conn.setDoOutput(true);
-                // write to POST data area
-                OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
-                out.write(name + "=" + value);
-                out.close();
+            // set request method to POST and send name value pair
+            conn.setRequestMethod("POST");
+            conn.setDoOutput(true);
+            // write to POST data area
+            OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
+            out.write(name + "=" + value);
+            out.close();
 
-                // get HTTP response code sent by server
-                status = conn.getResponseCode();
+            // get HTTP response code sent by server
+            status = conn.getResponseCode();
 
-                //close the connection
-		conn.disconnect();
-	    }
-            // handle exceptions
-            catch (MalformedURLException e) {
-		      e.printStackTrace();
-            }
-            catch (IOException e) {
-		      e.printStackTrace();
-	    }
+            //close the connection
+            conn.disconnect();
+        }
+        // handle exceptions
+        catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
 
-            // return HTTP status
+        // return HTTP status
 
-            return status;
+        return status;
     }
 
-     public static int doGet(String name, Result r) {
+    public static int doGet(String name, Result r) {
 
+        // Make an HTTP GET passing the name on the URL line
 
+        r.setValue("");
+        String response = "";
+        HttpURLConnection conn;
+        int status = 0;
 
-         // Make an HTTP GET passing the name on the URL line
+        try {
 
-         r.setValue("");
-         String response = "";
-         HttpURLConnection conn;
-         int status = 0;
+            // pass the name on the URL line
+            URL url = new URL("http://localhost:8080/ServerSideREST/VariableMemory" + "//"+name);
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            // tell the server what format we want back
+            conn.setRequestProperty("Accept", "text/plain");
 
-         try {
+            // wait for response
+            status = conn.getResponseCode();
 
-                // pass the name on the URL line
-		URL url = new URL("http://localhost:8080/WebServiceDesignStyles3ProjectServerLab/VariableMemory" + "//"+name);
-		conn = (HttpURLConnection) url.openConnection();
-		conn.setRequestMethod("GET");
-                // tell the server what format we want back
-		conn.setRequestProperty("Accept", "text/plain");
+            // If things went poorly, don't try to read any response, just return.
+            if (status != 200) {
+                // not using msg
+                String msg = conn.getResponseMessage();
+                return conn.getResponseCode();
+            }
+            String output = "";
+            // things went well so let's read the response
+            BufferedReader br = new BufferedReader(new InputStreamReader(
+                    (conn.getInputStream())));
 
-                // wait for response
-                status = conn.getResponseCode();
+            while ((output = br.readLine()) != null) {
+                response += output;
 
-                // If things went poorly, don't try to read any response, just return.
-		if (status != 200) {
-                    // not using msg
-                    String msg = conn.getResponseMessage();
-                    return conn.getResponseCode();
-                }
-                String output = "";
-                // things went well so let's read the response
-                BufferedReader br = new BufferedReader(new InputStreamReader(
-			(conn.getInputStream())));
+            }
 
-		while ((output = br.readLine()) != null) {
-			response += output;
+            conn.disconnect();
 
-		}
+        }
+        catch (MalformedURLException e) {
+            e.printStackTrace();
+        }   catch (IOException e) {
+            e.printStackTrace();
+        }
 
-		conn.disconnect();
-
-	    }
-                catch (MalformedURLException e) {
-		   e.printStackTrace();
-	    }   catch (IOException e) {
-		   e.printStackTrace();
-	    }
-
-         // return value from server
-         // set the response object
-         r.setValue(response);
-         // return HTTP status to caller
-         return status;
+        // return value from server
+        // set the response object
+        r.setValue(response);
+        // return HTTP status to caller
+        return status;
     }
 
     // Low level routine to make an HTTP PUT request
@@ -281,25 +193,25 @@ public class Main {
     public static int doPut(String name, String value) {
 
 
-         int status = 0;
-         try {
-		URL url = new URL("http://localhost:8080/WebServiceDesignStyles3ProjectServerLab/VariableMemory/");
-		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-		conn.setRequestMethod("PUT");
-		conn.setDoOutput(true);
-                OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
-                out.write(name + "=" + value);
-                out.close();
-		status = conn.getResponseCode();
+        int status = 0;
+        try {
+            URL url = new URL("http://localhost:8080/ServerSideREST/VariableMemory/");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("PUT");
+            conn.setDoOutput(true);
+            OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
+            out.write(name + "=" + value);
+            out.close();
+            status = conn.getResponseCode();
 
-                conn.disconnect();
+            conn.disconnect();
 
-	     }
-             catch (MalformedURLException e) {
-		   e.printStackTrace();
-	     } catch (IOException e) {
-		   e.printStackTrace();
-	     }
+        }
+        catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return status;
     }
 
@@ -310,34 +222,59 @@ public class Main {
 
         int status = 0;
 
-         try {
-		URL url = new URL("http://localhost:8080/WebServiceDesignStyles3ProjectServerLab/VariableMemory" + "//"+name);
-		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-		conn.setRequestMethod("DELETE");
-                status = conn.getResponseCode();
-		conn.disconnect();
-	     }
-             catch (MalformedURLException e) {
-		   e.printStackTrace();
-	     } catch (IOException e) {
-		   e.printStackTrace();
-	     }
+        try {
+            URL url = new URL("http://localhost:8080/ServerSideREST/VariableMemory" + "//"+name);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("DELETE");
+            status = conn.getResponseCode();
+            conn.disconnect();
+        }
+        catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return status;
     }
 
 }
-```
-
-Server side code:
 
 ```
 
+Create a standard Java Web Application project with the server side code provided here. Name the server side project WebServiceDesignStyles3ServerSideProject.
+
+Deploy the server side project to TomEE. Run the client side code. Spend a little time studying both the client and the server.
+
+web.xml
+
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+         version="4.0">
+    <servlet>
+        <servlet-name>RESTServlet</servlet-name>
+        <servlet-class>edu.cmu.andrew.mm6.VariableMemory</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RESTServlet</servlet-name>
+        <url-pattern>/VariableMemory</url-pattern>
+    </servlet-mapping>
+</web-app>
+
+```
+
+Set the test browser URL:  
+http://localhost:8080/ServerSideREST/index.jsp
+
+Set the Application Context:  
+/ServerSideREST
+
+```
 // ******************* Server Side Code ********************
 // 95-702 HTTP Lab exercise
-// Working server handling POST, PUT, GET, and DELETE
-
-// Server side code
-
+// Servlet handling POST, PUT, GET, and DELETE
 
 package edu.cmu.andrew.mm6;
 
@@ -352,7 +289,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
-// This example demonstrates Java servlets and HTTP
+// Demonstrating Java servlets and HTTP
 // This web service operates on string keys mapped to string values.
 
 @WebServlet(name = "VariableMemory", urlPatterns = {"/VariableMemory/*"})
@@ -366,7 +303,12 @@ public class VariableMemory extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        System.out.println("Console: doGET visited");
+        System.out.println("Console: doGET visited: ");
+
+        if(request.getPathInfo() == null ) {
+            System.out.println("Perhaps a browser visit....Returning.");
+            return;
+        }
 
         String result = "";
 
@@ -519,6 +461,61 @@ public class VariableMemory extends HttpServlet {
 
         }
     }
-
 }
+
+```
+
+:checkered_flag:**Completion of Task 1 is this lab's checkpoint.**
+
+The second task is to modify the client so that it provides methods called getVariableList() and
+the lower level method named doGetList(). Note the call to the getVariableList method (commented out)
+within the client side code. After modifying the server, remove the comment symbols from this
+call. That is, the method should actually work.
+
+The getVariableList method has the following signature and description:
+
+```
+public static String getVariableList()
+// makes a call to doGetList()
+// returns a list of all variable defined on the server.
+
+```
+
+The doGetList method has the following signature and description:
+
+```
+public static void doGetList(Result r)
+// Makes an HTTP GET request to the server. This is similar to the doGet provided on the client
+// but this one uses a different URL.
+// This method makes a call to the HTTP GET method using
+// http://localhost:8080/WebServiceDesignStyles3ProjectServerLab/VariableMemory/"
+
+```
+
+The third task is to modify the doGet method on the server. Currently it returns
+an HTTP 401 if a name is not provided in the URL. Your new doGet method will return
+a list of variable names found in the map. This list of variable names will be returned
+to the client for display. Clients will now be able to use two different URL's with a GET
+request. One will be used to return the value of a variable and the other will be able
+display the list of variables found within the map on the server. You are not being asked
+to return the values that are also stored in the map.
+
+:checkered_flag:**Show your TA your working solution. My solution has the following output on the client
+side:**
+
+```
+Begin main of REST lab.
+Assign 100 to the variable named x
+Assign 199 to the variable named x
+Sending a GET request for x
+199
+Sending a DELETE request for x
+x is deleted but let's try to read it
+Error from server 401
+Computer Science is no more about computers
+than astronomy is about telescopes.
+Edsger W. Dijkstra
+abc
+End main of REST lab
+
 ```
