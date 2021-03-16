@@ -6,6 +6,8 @@
 
 In RESTful design, the same HTTP operation may be applied to URL's that are related to each other but differ in what resource each represents. In this lab, we experiment with using the HTTP GET with two URL's - one representing a variable name and value stored on the server and the other representing a set of variables stored on the server.
 
+## Task 0 is the checkpoint
+
 The first task in this lab is to get the following code running in IntelliJ. Create a standard
 Java project named WebServiceDesignStyles3ClientSideProject. Within that project, use the client side code
 provided here:
@@ -274,8 +276,8 @@ Set the Application Context:
 /ServerSideREST
 
 ```
-// ******************* Server Side Code ********************
-// 95-702 HTTP Lab exercise
+
+// 95-702 REST Lab exercise
 // Servlet handling POST, PUT, GET, and DELETE
 
 package edu.cmu.andrew.mm6;
@@ -469,6 +471,8 @@ public class VariableMemory extends HttpServlet {
 
 :checkered_flag:**Completion of Task 1 is this lab's checkpoint.**
 
+## Task 1 completes the lab
+
 The second task is to modify the client so that it provides methods called getVariableList() and
 the lower level method named doGetList(). Note the call to the getVariableList method (commented out)
 within the client side code. After modifying the server, remove the comment symbols from this
@@ -490,11 +494,11 @@ public static void doGetList(Result r)
 // Makes an HTTP GET request to the server. This is similar to the doGet provided on the client
 // but this one uses a different URL.
 // This method makes a call to the HTTP GET method using
-// http://localhost:8080/WebServiceDesignStyles3ProjectServerLab/VariableMemory/"
+// http://localhost:8080/ServerSideREST/VariableMemory/"
 
 ```
 
-The third task is to modify the doGet method on the server. Currently it returns
+Modify the doGet method on the server. Currently it returns
 an HTTP 401 if a name is not provided in the URL. Your new doGet method will return
 a list of variable names found in the map. This list of variable names will be returned
 to the client for display. Clients will now be able to use two different URL's with a GET
