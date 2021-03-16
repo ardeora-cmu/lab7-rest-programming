@@ -8,7 +8,7 @@ In RESTful design, the same HTTP operation may be applied to URL's that are rela
 
 ## Task 0 is the checkpoint
 
-The first task in this lab is to get the following code running in IntelliJ. Create a standard
+In Task 0, you will get the following code running in IntelliJ. Create a standard
 Java project named WebServiceDesignStyles3ClientSideProject. Within that project, use the client side code
 provided here:
 
@@ -474,9 +474,9 @@ public class VariableMemory extends HttpServlet {
 
 :checkered_flag:**Completion of Task 0 is this lab's checkpoint.**
 
-## Task 1 
+## Task 1
 
-The second task is to modify the client so that it provides methods called getVariableList() and
+In Task 1, you will modify the client so that it provides methods called getVariableList() and
 the lower level method named doGetList(). Note the call to the getVariableList method (commented out)
 within the client side code. After modifying the server, remove the comment symbols from this
 call. That is, the method should actually work.
