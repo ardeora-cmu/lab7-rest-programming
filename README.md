@@ -472,9 +472,9 @@ public class VariableMemory extends HttpServlet {
 
 ```
 
-:checkered_flag:**Completion of Task 1 is this lab's checkpoint.**
+:checkered_flag:**Completion of Task 0 is this lab's checkpoint.**
 
-## Task 1 completes the lab
+## Task 1 
 
 The second task is to modify the client so that it provides methods called getVariableList() and
 the lower level method named doGetList(). Note the call to the getVariableList method (commented out)
