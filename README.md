@@ -242,14 +242,15 @@ public class Main {
 }
 
 ```
+### Server side
 
 Create a standard Java Web Application project with the server side code provided here. Name the server side project WebServiceDesignStyles3ServerSideProject.
 
 Deploy the server side project to TomEE. Run the client side code. Spend a little time studying both the client and the server.
 
-### Server side code
 
-web.xml
+
+#### web.xml
 
 ```
 <?xml version="1.0" encoding="UTF-8"?>
@@ -269,11 +270,13 @@ web.xml
 
 ```
 
-Set the test browser URL:  
+#### Set the test browser URL:  
 http://localhost:8080/ServerSideREST/index.jsp
 
-Set the Application Context:  
+#### Set the Application Context:  
 /ServerSideREST
+
+#### Servlet:
 
 ```
 
