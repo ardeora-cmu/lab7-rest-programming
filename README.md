@@ -10,9 +10,9 @@ The first task in this lab is to get the following code running in IntelliJ. Cre
 Java project named WebServiceDesignStyles3ClientSideProject. Within that project, use the client side code
 provided here:
 
-```
+### Client side code
 
-// ****************  Client side code  *********************
+```
 
 package edu.cmu.andrew.mm6;
 
@@ -245,6 +245,8 @@ Create a standard Java Web Application project with the server side code provide
 
 Deploy the server side project to TomEE. Run the client side code. Spend a little time studying both the client and the server.
 
+### Server side code
+
 web.xml
 
 ```
@@ -312,7 +314,7 @@ public class VariableMemory extends HttpServlet {
 
         String result = "";
 
-        // The name is on the path /name so skip over the '/'
+        // The name /name is on the path. So skip over the '/'.
         String name = (request.getPathInfo()).substring(1);
 
         // return 401 if name not provided
@@ -321,7 +323,7 @@ public class VariableMemory extends HttpServlet {
             return;
         }
 
-        // Look up the name from variable memory
+        // Look up the name from the variable memory
         String value = (String)memory.get(name);
 
         // return 401 if name not in map
@@ -352,7 +354,7 @@ public class VariableMemory extends HttpServlet {
 
         String result = "";
 
-        // The name is on the path /name so skip over the '/'
+        // The name /name is on the path. So, skip over the '/'.
         String name = (request.getPathInfo()).substring(1);
 
         if(name.equals("")) {
@@ -370,7 +372,7 @@ public class VariableMemory extends HttpServlet {
             return;
         }
 
-        // delete the name
+        // delete the name from the map
         memory.remove(name);
 
         // Set HTTP response code to 200 OK
