@@ -2,19 +2,26 @@
 
 # 95-702 Distributed Systems             REST Programming
 
-## Modifying a working client and server handling POST, PUT, GET, and DELETE
+In this lab, we explore JAX-RS. This is an important JEE API that supports the
+building of RESTFul web services. [You might want to browse the documentation on
+JAX-RS.](https://docs.oracle.com/javaee/6/tutorial/doc/giepu.html)
 
-In RESTful design, the same HTTP operation may be applied to URL's that are related to each other but differ in what resource each represents. In this lab, we experiment with using the HTTP GET with two URL's - one representing a variable name and value stored on the server and the other representing a set of variables stored on the server.
+## Modifying a working client and server handling PUT, GET, and DELETE
 
-## Task 0 is the checkpoint
+In RESTful design, the same HTTP operation may be applied to URL's that are related to each other but differ in what resource each represents. In this lab, we experiment with using the HTTP GET with several URL's - one representing a variable name and value stored on the server and the other representing a set of variables stored on the server.
+
+## Task 0
 
 In Task 0, you will get the following code running in IntelliJ. Create a standard
-Java project named WebServiceDesignStyles3ClientSideProject. Within that project, use the client side code
-provided here:
+Java project named REST_Client_Project. Within that project, use the client side code
+provided here (in the package name, replace "mm6" with your andrew id):
 
 ### Client side code
 
 ```
+// Client side code making calls to an HTTP service
+// The service provides GET, DELETE, and PUT
+// Simple example client storing and deleting name, value pairs on the server
 
 package edu.cmu.andrew.mm6;
 
@@ -27,504 +34,381 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-// A simple class to wrap a result.
+// A simple class to wrap an RPC result.
 class Result {
-    String value;
+    private int responseCode;
+    private String responseText;
 
-    public String getValue() {
-        return value;
-    }
-    public void setValue(String value) {
-        this.value = value;
-    }
+    public int getResponseCode() { return responseCode; }
+    public void setResponseCode(int code) { responseCode = code; }
+    public String getResponseText() { return responseText; }
+    public void setResponseText(String msg) { responseText = msg; }
+
+    public String toString() { return responseCode + ":" + responseText; }
 }
 public class Main {
 
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) throws Exception {
 
         System.out.println("Begin main of REST lab.");
         System.out.println("Assign 100 to the variable named x");
-        assign("x","100");
+        System.out.println(assign("x", "100"));
+
         System.out.println("Assign 199 to the variable named x");
-        assign("x","199");
-        System.out.println("Sending a GET request for x");
-        // Get the value associated with a name on the server
+        System.out.println(assign("x", "199"));
+        System.out.println("Send a request to read x");
         System.out.println(read("x"));
+
+
         System.out.println("Sending a DELETE request for x");
-        clear("x");
+        System.out.println(clear("x"));
         System.out.println("x is deleted but let's try to read it");
         System.out.println(read("x"));
 
-        assign("a","Computer Science is no more about computers\n ");
-        assign("b","than astronomy is about telescopes.\n");
-        assign("c","Edsger W. Dijkstra\n");
 
-        System.out.println(read("a"));
-        System.out.println(read("b"));
-        System.out.println(read("c"));
+        // place a quote in some variables
+        assign("Line1", "Computer Science is no more about computers\n ");
+        assign("Line2", "than astronomy is about telescopes.\n");
+        assign("Line3", "Edsger W. Dijkstra\n");
 
+        // read them from the server
+        System.out.println(read("Line1"));
+        System.out.println(read("Line2"));
+        System.out.println(read("Line3"));
+
+        //Code commented out fot the moment
         //System.out.println(getVariableList());
 
         System.out.println("End main of REST lab");
+
     }
 
-    // assign a string value to a string name (One character names for demo)
-    public static boolean assign(String name, String value) {
-        // We always want to be able to assign so we may need to PUT or POST.
-        // Try to PUT, if that fails then try to POST
-        if(doPut(name,value) == 200) {
-            return true;
-        }
-        else {
-            if(doPost(name,value) == 200) {
-                return true;
-            }
-        }
-        return false;
+    // Call doPut with name and value pair
+    public static Result assign(String name, String value) {
+        Result r = doPut(name, value);
+        return r;
     }
 
-    // read a value associated with a name from the server
-    // return either the value read or an error message
-    public static String read(String name) {
-        Result r = new Result();
-        int status = 0;
-        if((status = doGet(name,r)) != 200) return "Error from server "+ status;
-        return r.getValue();
-    }
-    // delete a variable on the server
-    // if the server sends an error return false to the caller
-    public static boolean clear(String name) {
-        if(doDelete(name) == 200) return true;
-        else return false;
+    // Call doGet with a name
+    public static Result read(String name) {
+        Result r = doGet(name);
+        return r;
     }
 
-    // Low level routine to make an HTTP POST request
-    // Note, POST does not use the URL line for its message to the server
-    public static int doPost(String name, String value) {
-
-        int status = 0;
-        String output;
-
-        try {
-            // Make call to a particular URL
-            URL url = new URL("http://localhost:8080/ServerSideREST/VariableMemory/");
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-
-            // set request method to POST and send name value pair
-            conn.setRequestMethod("POST");
-            conn.setDoOutput(true);
-            // write to POST data area
-            OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
-            out.write(name + "=" + value);
-            out.close();
-
-            // get HTTP response code sent by server
-            status = conn.getResponseCode();
-
-            //close the connection
-            conn.disconnect();
-        }
-        // handle exceptions
-        catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        // return HTTP status
-
-        return status;
+    // call doDelete with a name
+    public static Result clear(String name) {
+        Result r = doDelete(name);
+        return r;
     }
 
-    public static int doGet(String name, Result r) {
+    // Make an HTTP GET request
+    public static Result doGet(String name) {
 
-        // Make an HTTP GET passing the name on the URL line
-
-        r.setValue("");
-        String response = "";
         HttpURLConnection conn;
         int status = 0;
-
+        Result result = new Result();
         try {
-
-            // pass the name on the URL line
-            URL url = new URL("http://localhost:8080/ServerSideREST/VariableMemory" + "//"+name);
+            // GET wants us to pass the name on the URL line
+            URL url = new URL("http://localhost:8080/RESTServicePrj-1.0-SNAPSHOT/api/variable-memory/" + name);
             conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
+            // we are sending plain text
+            conn.setRequestProperty("Content-Type", "text/plain; charset=utf-8");
             // tell the server what format we want back
             conn.setRequestProperty("Accept", "text/plain");
 
             // wait for response
             status = conn.getResponseCode();
 
-            // If things went poorly, don't try to read any response, just return.
-            if (status != 200) {
-                // not using msg
-                String msg = conn.getResponseMessage();
-                return conn.getResponseCode();
-            }
-            String output = "";
-            // things went well so let's read the response
-            BufferedReader br = new BufferedReader(new InputStreamReader(
-                    (conn.getInputStream())));
+            // set http response code
+            result.setResponseCode(status);
+            // set http response message - this is just a status message
+            // and not the body returned by GET
+            result.setResponseText(conn.getResponseMessage());
 
-            while ((output = br.readLine()) != null) {
-                response += output;
-
+            if (status == 200) {
+                String responseBody = getResponseBody(conn);
+                result.setResponseText(responseBody);
             }
 
             conn.disconnect();
 
         }
+        // handle exceptions
         catch (MalformedURLException e) {
-            e.printStackTrace();
-        }   catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("URL Exception thrown" + e);
+        } catch (IOException e) {
+            System.out.println("IO Exception thrown" + e);
+        } catch (Exception e) {
+            System.out.println("IO Exception thrown" + e);
         }
-
-        // return value from server
-        // set the response object
-        r.setValue(response);
-        // return HTTP status to caller
-        return status;
+        return result;
     }
 
-    // Low level routine to make an HTTP PUT request
-    // Note, PUT does not use the URL line for its message to the server
-    public static int doPut(String name, String value) {
 
+    // Make an HTTP PUT request and pass the name and value
+    public static Result doPut(String name, String value) {
 
+        HttpURLConnection conn;
         int status = 0;
+        Result result = new Result();
+
         try {
-            URL url = new URL("http://localhost:8080/ServerSideREST/VariableMemory/");
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            // establish the URL
+            // Note, PUT does not use the URL line for its message to the server
+            URL url = new URL("http://localhost:8080/RESTServicePrj-1.0-SNAPSHOT/api/variable-memory/");
+            conn = (HttpURLConnection) url.openConnection();
+            // we are sending plain text
+            conn.setRequestProperty("Content-Type", "text/plain; charset=utf-8");
+            conn.setRequestProperty("Accept", "text/plain");
+            // prepare to put
             conn.setRequestMethod("PUT");
+            // we are sending data with this put request
             conn.setDoOutput(true);
+            // write to the connection
             OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
+            // write name value pair
             out.write(name + "=" + value);
             out.close();
+
+            // see how things went
             status = conn.getResponseCode();
+            result.setResponseCode(status);
+            result.setResponseText(conn.getResponseMessage());
 
-            conn.disconnect();
+            if (status == 200) {
+                // things went well, gather up the response body
+                String responseBody = getResponseBody(conn);
+                result.setResponseText(responseBody);
+            }
 
         }
+        // handle exceptions
         catch (MalformedURLException e) {
-            e.printStackTrace();
+            System.out.println("URL Exception thrown" + e);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("IO Exception thrown" + e);
         }
-        return status;
+
+        // return result
+        return result;
     }
 
-    // Send an HTTP DELETE to server along with name on the URL line
-    // We need not read the response, we are only interested in the HTTP status
-    // code.
-    public static int doDelete(String name) {
 
+    // Make an HTTP DELETE request with a name
+    public static Result doDelete(String name) {
+
+        HttpURLConnection conn;
         int status = 0;
+        Result result = new Result();
 
+        // Send an HTTP DELETE to server along with name on the URL line
         try {
-            URL url = new URL("http://localhost:8080/ServerSideREST/VariableMemory" + "//"+name);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            URL url = new URL("http://localhost:8080/RESTServicePrj-1.0-SNAPSHOT/api/variable-memory/" + name);
+            conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("DELETE");
+            // we are sending plain text
+            conn.setRequestProperty("Content-Type", "text/plain; charset=utf-8");
+            // tell the server what format we want back
+            conn.setRequestProperty("Accept", "text/plain");
+            // wait for response
             status = conn.getResponseCode();
-            conn.disconnect();
+            result.setResponseCode(status);
+            result.setResponseText(conn.getResponseMessage());
+            if (status == 200) {
+                // things went well, gather up the response body
+                String responseBody = getResponseBody(conn);
+                result.setResponseText(responseBody);
+            }
         }
+        // handle exceptions
         catch (MalformedURLException e) {
-            e.printStackTrace();
+            System.out.println("URL Exception thrown" + e);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("IO Exception thrown" + e);
         }
-        return status;
+        return result;
     }
 
+    // Gather up a response body from the connection
+    // and close the connection.
+    public static String getResponseBody(HttpURLConnection conn) {
+        String responseText = "";
+        try {
+            String output = "";
+            BufferedReader br = new BufferedReader(new InputStreamReader(
+                    (conn.getInputStream())));
+            while ((output = br.readLine()) != null) {
+                responseText += output;
+            }
+            conn.disconnect();
+        } catch (IOException e) {
+            System.out.println("Exception caught " + e);
+        }
+        return responseText;
+    }
 }
+
 
 ```
 ### Server side
 
-Create a standard Java Web Application project with the server side code provided here. Name the server side project WebServiceDesignStyles3ServerSideProject.
+1. Create a new project in IntelliJ named RESTServicePrj. This will be a Java
+Enterprise project. The Project template will be "REST Service". We are using
+TomEE and the recent Project SDK. Select Java, Maven, and JUint.
 
-Deploy the server side project to TomEE. Run the client side code. Spend a little time studying both the client and the server.
+2. Be sure to select Jakarta EE 9 in the version drop down box.
 
+3. Select three dependencies: Context and Dependency Injection (CDI), RESTFul Web
+Services (JAX-RS), and Servlet.
 
+4. In the Run/Debug Configurations, set the Open Browser URL to
+http://localhost:8080/RESTServicePrj-1.0-SNAPSHOT/api/hello-world
 
-#### web.xml
+5. Run the RESTServicePrj service. A browser should display "hello world".
 
-```
-<?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
-         version="4.0">
-    <servlet>
-        <servlet-name>RESTServlet</servlet-name>
-        <servlet-class>edu.cmu.andrew.mm6.VariableMemory</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>RESTServlet</servlet-name>
-        <url-pattern>/VariableMemory</url-pattern>
-    </servlet-mapping>
-</web-app>
+6. In the code of HelloResource class, there is a Path annotation. Change this
+from "hello-world" to "variable-memory".
 
-```
+7. In the Run/Debug Configurations, set the Open Browser URL to
+http://localhost:8080/RESTServicePrj-1.0-SNAPSHOT/api/variable-memory
 
-#### Set the test browser URL:  
-http://localhost:8080/ServerSideREST/index.jsp
+8. Run the RESTServicePrj service. A browser should again display "hello world".
 
-#### Set the Application Context:  
-/ServerSideREST
+9. Change the name (refactor) the Java "application" file to "VariableApplication"
+and the other file name to "VariableMemory".
 
-#### Servlet:
+10. Replace the existing code in the file "VariableMemory.java" with the following JAX-RS service.
 
 ```
+// This is a JAX-RS service that allows visitors to store, retrieve, and delete
+// name value pairs.
 
-// 95-702 REST Lab exercise
-// Servlet handling POST, PUT, GET, and DELETE
+package com.example.restserviceprj;
 
-package edu.cmu.andrew.mm6;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Response;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.*;
+// handle requests to /variablememory
 
-// Demonstrating Java servlets and HTTP
-// This web service operates on string keys mapped to string values.
+@Path("/variable-memory")
+public class VariableMemory {
 
-@WebServlet(name = "VariableMemory", urlPatterns = {"/VariableMemory/*"})
-public class VariableMemory extends HttpServlet {
-
-    // This map holds key value pairs
+    // This map holds variable names and values
     private static Map memory = new TreeMap();
 
-    // GET returns a value given a key
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        System.out.println("Console: doGET visited: ");
-
-        if(request.getPathInfo() == null ) {
-            System.out.println("Perhaps a browser visit....Returning.");
-            return;
-        }
-
-        String result = "";
-
-        // The name /name is on the path. So skip over the '/'.
-        String name = (request.getPathInfo()).substring(1);
-
-        // return 401 if name not provided
-        if(name.equals("")) {
-            response.setStatus(401);
-            return;
-        }
-
-        // Look up the name from the variable memory
-        String value = (String)memory.get(name);
-
-        // return 401 if name not in map
-        if(value == null || value.equals("")) {
-            // no variable name found in map
-            response.setStatus(401);
-            return;
-        }
-
-        // Things went well so set the HTTP response code to 200 OK
-        response.setStatus(200);
-        // tell the client the type of the response
-        response.setContentType("text/plain;charset=UTF-8");
-
-        // return the value from a GET request
-        result = value;
-        PrintWriter out = response.getWriter();
-        out.println(result);
+    // This GET will run on a visit to /variable-memory
+    @GET
+    @Produces("text/plain")
+    public Response getDefault() {
+        String defaultString = "Visited with /variable-memory addc a slash/name to visit the other GET";
+        System.out.println("GET request by visiting with /variable-memory");
+        // generate a response
+        return Response.status(200).entity(defaultString).build();
     }
 
-    // Delete an existing variable from memory. If no such variable then return a 401
-    @Override
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    // This GET will run on a visit to /variable-memory/variableName
+    @Path("{variableName}")
+    @GET
+    @Produces("text/plain")
+    public Response getFromMemory(@PathParam("variableName") String variableName) {
+        System.out.println("GET request by visiting with /variable-memory/" + variableName);
+        String output = "";
+        // get variable's value by name from the map
+        Object lookUp = memory.get(variableName);
+        // figure return value
+        if (lookUp == null) output = "No variable named " + variableName + " found in memory";
+        else output = (String) lookUp;
+        // generate a response
+        return Response.status(200).entity(output).build();
+    }
 
-
-        System.out.println("Console: doDelete visited");
-
-        String result = "";
-
-        // The name /name is on the path. So, skip over the '/'.
-        String name = (request.getPathInfo()).substring(1);
-
-        if(name.equals("")) {
-            // no variable name return 401
-            response.setStatus(401);
-            return;
-        }
-
-        // Look up the name from variable memory
-        String value = (String)memory.get(name);
-
-        if(value == null || value.equals("")) {
-            // no variable name found in map so return 401
-            response.setStatus(401);
-            return;
-        }
-
-        // delete the name from the map
-        memory.remove(name);
-
-        // Set HTTP response code to 200 OK
-        response.setStatus(200);
+    // This PUT will run with the body holding a name=value
+    @PUT
+    @Consumes("text/plain")
+    @Produces(value = "text/plain")
+    public Response storeInMemory(String fromVisitor) {
+        System.out.println("From a call to put " + fromVisitor);
+        // spit the name and the value from the visitor
+        String[] input = fromVisitor.split("=");
+        // store the pair in the map
+        memory.put(input[0], input[1]);
+        // report visit on the server's console
+        System.out.println(input[0] + " stored with value " + input[1]);
+        // return a response to the visitor
+        return Response.status(200).entity(input[0] + " assigned the value "+ input[1]).build();
 
     }
 
-    // POST is used to create a new variable
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    // This DELETE will run with the body holding a name
+    @Path("{fromVisitor}")
+    @DELETE
+    @Produces("text/plain")
+    public Response deleteFromMemory(@PathParam("fromVisitor") String fromVisitor) {
+        System.out.println("Deleting " + fromVisitor);
+        // remove the key value pair from the map
+        memory.remove(fromVisitor);
+        // report visit on the server's console
+        System.out.println("Removing key " + fromVisitor + " from the map");
+        // return a response to the visitor
+        return Response.status(200).entity("DELETE completed on server").build();
 
-        System.out.println("Console: doPost visited");
-
-        // To look at what the client accepts examine request.getHeader("Accept")
-        // We are not using the accept header here.
-
-        // Read what the client has placed in the POST data area
-        BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream()));
-        String data = br.readLine();
-
-        // extract variable name from request data (variable names are a single character)
-        String variableName = "" + data.charAt(0);
-
-        // extract value after the equals sign
-
-        String valString = data.substring(2);
-
-        if(variableName.equals("") || valString.equals("")) {
-            // missing input return 401
-            response.setStatus(401);
-            return;
-        }
-
-        String result = "";
-
-        // If the variable is already in memory, let's return an error
-        if(memory.get(variableName) != null) {
-            response.setStatus(409);
-            return;
-        }
-        else {
-            // Not in memory so store name and value in the map
-            memory.put(variableName, valString);
-
-            // prepare response code
-            response.setStatus(200);
-            return;
-
-        }
     }
-    /* In this example, we use Put to update an existing variable.  */
-    @Override
-    protected void doPut(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
 
-        System.out.println("Console: doPut visited");
-        // Read what the client has placed in the PUT data area
-        BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream()));
-        String data = br.readLine();
-
-        // extract variable name from request data (variable names are a single character)
-        String variableName = "" + data.charAt(0);
-
-        // extract value after the equals sign
-
-        String valString = data.substring(2);
-
-        if(variableName.equals("") || valString.equals("")) {
-            // missing input return 401
-            response.setStatus(401);
-            return;
-        }
-
-        String result = "";
-
-        // If the variable is not already in memory, let's return an error
-        if(memory.get(variableName) == null) {
-            response.setStatus(409);
-            return;
-        }
-        else {
-            // The name is in memory so store the new name and value in the map
-            memory.put(variableName, valString);
-            // prepare response code
-            response.setStatus(200);
-            return;
-
-        }
-    }
 }
 
 ```
 
-:checkered_flag:**Completion of Task 0 is this lab's checkpoint.**
+11. You should be able to visit the GET methods with a browser. Visit with the
+following URLs.
 
-## Task 1 completes the lab
+```
+http://localhost:8080/RESTServicePrj-1.0-SNAPSHOT/api/variable-memory
+http://localhost:8080/RESTServicePrj-1.0-SNAPSHOT/api/variable-memory/someName
 
-In Task 1, you will modify the client so that it provides methods called getVariableList() and
-the lower level method named doGetList(). Note the call to the getVariableList method (commented out)
-within the client side code. After modifying the server, remove the comment symbols from this
+```
+
+:checkered_flag:**You have completed Task 0**
+
+## Task 1
+
+Take some time to study the working solution in Task 0.
+
+In Task 1, you will modify the client so that it provides a method called getVariableList().
+Note the call to the getVariableList() method (commented out) within the client side code. After modifying the server, remove the comment symbols from this
 call. That is, the method should actually work.
 
-The getVariableList method has the following signature and description:
+The getVariableList() method will call doGet and will retrieve a list of all of the names
+(but without their values) found on the server.
+
+An additional method needs to be added to the server to handle visits to this URL:
 
 ```
-public static String getVariableList()
-// makes a call to doGetList()
-// returns a list of all variable defined on the server.
+http://localhost:8080/RESTServicePrj-1.0-SNAPSHOT/api/variable-memory/list/variables
 
 ```
-
-The doGetList method has the following signature and description:
-
-```
-public static void doGetList(Result r)
-// Makes an HTTP GET request to the server. This is similar to the doGet provided on the client
-// but this one uses a different URL.
-// This method makes a call to the HTTP GET method using
-// http://localhost:8080/ServerSideREST/VariableMemory/"
-
-```
-
-Modify the doGet method on the server. Currently it returns
-an HTTP 401 if a name is not provided in the URL. Your new doGet method will return
-a list of variable names found in the map. This list of variable names will be returned
-to the client for display. Clients will now be able to use two different URL's with a GET
-request. One will be used to return the value of a variable and the other will be able
-display the list of variables found within the map on the server. You are not being asked
-to return the values that are also stored in the map.
-
-:checkered_flag:**Show your TA your working solution. My solution has the following output on the client
-side:**
+Here is the client side execution of my solution:
 
 ```
 Begin main of REST lab.
 Assign 100 to the variable named x
+200:x assigned the value 100
 Assign 199 to the variable named x
-Sending a GET request for x
-199
+200:x assigned the value 199
+Send a request to read x
+200:199
 Sending a DELETE request for x
+200:DELETE completed on server
 x is deleted but let's try to read it
-Error from server 401
-Computer Science is no more about computers
-than astronomy is about telescopes.
-Edsger W. Dijkstra
-abc
+200:No variable named x found in memory
+200:Computer Science is no more about computers
+200:than astronomy is about telescopes.
+200:Edsger W. Dijkstra
+200:Line1Line2Line3
 End main of REST lab
 
 ```
