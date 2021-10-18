@@ -251,7 +251,7 @@ public class Main {
 
 
 ```
-### Server side
+### Server side code
 
 1. Create a new project in IntelliJ named RESTServicePrj. This will be a Java
 Enterprise project. The Project template will be "REST Service". We are using
