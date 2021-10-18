@@ -255,7 +255,7 @@ public class Main {
 
 1. Create a new project in IntelliJ named RESTServicePrj. This will be a Java
 Enterprise project. The Project template will be "REST Service". We are using
-TomEE and the recent Project SDK. Select Java, Maven, and JUint.
+TomEE and a recent Java SDK. Select Java, Maven, and JUint.
 
 2. Be sure to select Jakarta EE 9 in the version drop down box.
 
