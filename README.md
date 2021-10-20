@@ -3,8 +3,7 @@
 # 95-702 Distributed Systems             REST Programming
 
 In this lab, we explore JAX-RS. This is an important JEE API that supports the
-building of RESTFul web services. [You might want to browse the documentation on
-JAX-RS.](https://docs.oracle.com/javaee/6/tutorial/doc/giepu.html)
+building of RESTFul web services. Through annotations, JAX-RS allows us to match URL's and HTTP methods to particular Java methods. [You might want to browse the documentation on JAX-RS.](https://docs.oracle.com/javaee/6/tutorial/doc/giepu.html). The central idea is to associate a URL path and an HTTP verb with each Java method that we want to serve.
 
 ## Modifying a working client and server handling PUT, GET, and DELETE
 
