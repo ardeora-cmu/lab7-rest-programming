@@ -275,8 +275,8 @@ http://localhost:8080/RESTServicePrj-1.0-SNAPSHOT/api/variable-memory
 
 8. Run the RESTServicePrj service. A browser should again display "hello world".
 
-9. Change the name of the Java HelloApplication file to "VariableApplication"
-and the "HelloResource" file name to "VariableMemory".
+9. Change the name of the Java HelloApplication file to "VariableApplication".
+Change the name of the Java "HelloResource" file to "VariableMemory".
 
 10. Replace the existing code in the file "VariableMemory.java" with the following JAX-RS service.
 
