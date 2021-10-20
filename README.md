@@ -385,7 +385,7 @@ call. That is, the method should actually work.
 The getVariableList() method will call doGet and will retrieve a list of all of the names
 (but without their values) found on the server.
 
-An additional method needs to be added to the server to handle visits to this new URL:
+An additional Java method needs to be added to the server to handle visits to this new URL:
 
 ```
 http://localhost:8080/RESTServicePrj-1.0-SNAPSHOT/api/variable-memory/list/variables
