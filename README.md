@@ -391,6 +391,9 @@ An additional method needs to be added to the server to handle visits to this UR
 http://localhost:8080/RESTServicePrj-1.0-SNAPSHOT/api/variable-memory/list/variables
 
 ```
+
+On the server, you will want to match the path "/list/variables".
+
 Here is the client side execution of my solution:
 
 ```
