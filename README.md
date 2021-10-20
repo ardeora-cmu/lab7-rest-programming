@@ -5,6 +5,7 @@
 In this lab, we explore JAX-RS. This is an important JEE API that supports the
 building of RESTFul web services. Through annotations, JAX-RS allows us to match URL's and HTTP methods to particular Java methods. [You might want to browse the documentation on JAX-RS.](https://docs.oracle.com/javaee/6/tutorial/doc/giepu.html). The central idea is to associate a URL path and an HTTP verb with each Java method that we want to serve.
 
+
 ## Modifying a working client and server handling PUT, GET, and DELETE
 
 In RESTful design, the same HTTP operation may be applied to URL's that are related to each other but differ in what resource each represents. In this lab, we experiment with using the HTTP GET with several URL's - one representing a variable name and value stored on the server and the other representing a set of variables stored on the server.
@@ -393,7 +394,7 @@ http://localhost:8080/RESTServicePrj-1.0-SNAPSHOT/api/variable-memory/list/varia
 
 Note that the client must generate a GET request to this new URL. On the server, you will want to match the path "/list/variables".
 
-Here is the client side execution of my solution:
+Here is the client side execution of my solution. Note that "Line1Line2Line3" is a list of variable names that came back from the server.
 
 ```
 Begin main of REST lab.
