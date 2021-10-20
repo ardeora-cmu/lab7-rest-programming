@@ -364,7 +364,7 @@ public class VariableMemory {
 ```
 
 11. You should be able to visit the GET methods with a browser. Visit with the
-following URLs.
+following URLs. This is for testing.
 
 ```
 http://localhost:8080/RESTServicePrj-1.0-SNAPSHOT/api/variable-memory
