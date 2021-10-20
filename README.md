@@ -76,7 +76,7 @@ public class Main {
         System.out.println(read("Line2"));
         System.out.println(read("Line3"));
 
-        //Code commented out fot the moment
+        //Code commented out for the moment
         //System.out.println(getVariableList());
 
         System.out.println("End main of REST lab");
