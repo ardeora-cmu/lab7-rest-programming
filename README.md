@@ -372,7 +372,7 @@ http://localhost:8080/RESTServicePrj-1.0-SNAPSHOT/api/variable-memory/someName
 
 ```
 
-:checkered_flag:**You have completed Task 0**
+:checkered_flag:**You have completed Task 0. Show your TA for the 1/4 point.**
 
 ## Task 1
 
@@ -415,3 +415,4 @@ x is deleted but let's try to read it
 End main of REST lab
 
 ```
+:checkered_flag:**You have completed Task 1. Show any TA for the 3/4 point.**
