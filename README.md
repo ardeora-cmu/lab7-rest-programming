@@ -253,9 +253,8 @@ public class Main {
 ```
 ### Server side code
 
-1. Create a new project in IntelliJ named RESTServicePrj. This will be a Java
-Enterprise project. The Project template will be "REST Service". We are using
-TomEE and a recent Java SDK. Select Java, Maven, and JUint.
+1. Create a new project in IntelliJ named RESTServicePrj. This will be a Java Jakarta EE project. The Project template will be "REST Service". We are using
+TomEE and a recent Java SDK. Select Java and Maven.
 
 2. Be sure to select Jakarta EE 9 in the version drop down box.
 
@@ -371,6 +370,7 @@ http://localhost:8080/RESTServicePrj-1.0-SNAPSHOT/api/variable-memory
 http://localhost:8080/RESTServicePrj-1.0-SNAPSHOT/api/variable-memory/someName
 
 ```
+12. With your restful service running, run the client side code from Task 0.
 
 :checkered_flag:**You have completed Task 0. Show your TA for the 1/4 point.**
 
