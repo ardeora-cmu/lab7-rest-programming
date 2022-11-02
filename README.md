@@ -256,7 +256,7 @@ public class Main {
 1. Create a new project in IntelliJ named RESTServicePrj. This will be a Java Jakarta EE project. The Project template will be "REST Service". We are using
 TomEE and a recent Java SDK. Select Java and Maven.
 
-2. Be sure to select Jakarta EE 9 in the version drop down box.
+2. Be sure to select a recent version of Jakarta EE in the version drop down box.
 
 3. Select three dependencies: Context and Dependency Injection (CDI), RESTFul Web
 Services (JAX-RS), and Servlet.
