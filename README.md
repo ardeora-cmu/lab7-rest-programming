@@ -304,7 +304,7 @@ public class VariableMemory {
     @GET
     @Produces("text/plain")
     public Response getDefault() {
-        String defaultString = "Visited with /variable-memory addc a slash/name to visit the other GET";
+        String defaultString = "Visited with /variable-memory add a /name to visit the other GET";
         System.out.println("GET request by visiting with /variable-memory");
         // generate a response
         return Response.status(200).entity(defaultString).build();
