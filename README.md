@@ -269,9 +269,11 @@ http://localhost:8080/RESTServicePrj-1.0-SNAPSHOT/api/hello-world
    Notice too how the correct URL to use may be found in the console logs when the service is deployed.
 
    The pom.xml file has the following elements that contribute to the URL:
-   ```
+
+  ```
    <version>1.0-SNAPSHOT</version>
    <name>RESTServicePrj</name>
+
   ```
 
 5. Run the RESTServicePrj service. A browser should display "hello world".
