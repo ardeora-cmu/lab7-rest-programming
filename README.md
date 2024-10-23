@@ -264,6 +264,8 @@ Services (JAX-RS), and Servlet.
 4. In the Run/Debug Configurations, set the Open Browser URL to
 http://localhost:8080/RESTServicePrj-1.0-SNAPSHOT/api/hello-world
 
+  In addition, in Run/Debug Configurations/Deployment set the Application context to /RESTServicePrj-1.0-SNAPSHOT
+
    Notice how "api/hello-world" is constructed from the Java source code. The HelloApplication.java file has "/api" and HelloResource.java has "/hello-world".
 
    Notice too how the correct URL to use may be found in the console logs when the service is deployed.
