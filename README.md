@@ -1,4 +1,4 @@
-# lab8-rest-programming
+# lab7-rest-programming
 
 # 95-702 Distributed Systems             REST Programming
 
