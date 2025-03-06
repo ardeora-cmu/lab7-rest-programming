@@ -3,12 +3,18 @@
 # 95-702 Distributed Systems             REST Programming
 
 In this lab, we explore JAX-RS. This is an important JEE API that supports the
-building of RESTFul web services. Through annotations, JAX-RS allows us to match URL's and HTTP methods to particular Java methods. [You might want to browse the documentation on JAX-RS.](https://docs.oracle.com/javaee/6/tutorial/doc/giepu.html). The central idea is to associate a URL path and an HTTP verb with each Java method that we want to serve.
+building of RESTFul web services. Through annotations, JAX-RS allows us to match URL's and HTTP methods to particular Java methods. [You might want to browse the documentation on JAX-RS.](https://docs.oracle.com/javaee/6/tutorial/doc/giepu.html).
+From the JAX-RS documentation: "In the REST architectural style, data and functionality are considered resources and are accessed using Uniform Resource Identifiers (URIs), typically links on the Web. The resources are acted upon by using a set of simple, well-defined operations. In the REST architecture style, clients and servers exchange representations of resources by using a standardized interface and protocol."
 
+The central idea is to associate a URL path and an HTTP verb with each resource or Java method that we want to serve. In the REST architectural style, we use a constrained user interface. We may use GET, PUT, POST, or DELETE but we do not make up names as we do in traditional programming.
+
+:checkered_flag: Answer question 1 on the Canvas quiz named Lab7_Quiz.
 
 ## Modifying a working client and server handling PUT, GET, and DELETE
 
 In RESTful design, the same HTTP operation may be applied to URL's that are related to each other but differ in what resource each represents. In this lab, we experiment with using the HTTP GET with several URL's - one representing a variable name and value stored on the server and the other representing a set of variables stored on the server.
+
+:checkered_flag: Answer question 2 on the Canvas quiz named Lab7_Quiz.
 
 ## Task 0
 
@@ -16,9 +22,15 @@ In Task 0, you will get the following code running in IntelliJ. Create a standar
 Java project named REST_Client_Project. Within that project, use the client side code
 provided here (in the package name, replace "mm6" with your andrew id):
 
+After reading over the code in the REST_Client_Project, answer the next quiz question.
+
+:checkered_flag: Answer question 3 on the Canvas quiz named Lab7_Quiz.
+
+
 ### Client side code
 
 ```
+// REST_Client_Project code
 // Client side code making calls to an HTTP service
 // The service provides GET, DELETE, and PUT
 // Simple example client storing and deleting name, value pairs on the server
@@ -386,7 +398,8 @@ http://localhost:8080/RESTServicePrj-1.0-SNAPSHOT/api/variable-memory/someName
 ```
 12. With your restful service running, run the client side code from Task 0.
 
-:checkered_flag:**You have completed Task 0. Show your TA for the 1/4 point.**
+:checkered_flag: Answer question 4 on the Canvas quiz named Lab7_Quiz.
+
 
 ## Task 1
 
@@ -429,4 +442,4 @@ x is deleted but let's try to read it
 End main of REST lab
 
 ```
-:checkered_flag:**You have completed Task 1. Show any TA for the 3/4 point.**
+:checkered_flag: Answer question 5 on the Canvas quiz named Lab7_Quiz.
