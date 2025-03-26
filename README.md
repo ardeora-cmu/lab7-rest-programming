@@ -29,7 +29,7 @@ After reading over the code in the REST_Client_Project, answer the next quiz que
 
 ### Client side code
 
-```
+```java
 // REST_Client_Project code
 // Client side code making calls to an HTTP service
 // The service provides GET, DELETE, and PUT
@@ -305,7 +305,7 @@ Change the name of the Java "HelloResource" file to "VariableMemory".
 
 10. Replace the existing code in the file "VariableMemory.java" with the following JAX-RS service.
 
-```
+```java
 // This is a JAX-RS service that allows visitors to store, retrieve, and delete
 // name value pairs.
 
